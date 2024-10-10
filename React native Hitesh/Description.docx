@@ -1,0 +1,86 @@
+Trying to type from VS Code
+
+Init project
+
+npm install @react-navigation/native
+
+npm install react-native-screens react-native-safe-area-context
+
+npm install @react-navigation/native-stack
+
+create src, move App.js
+
+Navigation => 
+Create folder Screens< create files Home.tsx, Details.tsx
+
+Creating RootParamsList - export type RootStackParamList = {
+                                   	Home: undefined;
+                                	Details: {product: Product};
+                                     };
+Create Index.d.ts in src with params for RootStackParamList.Details
+                            interface Product {
+                                     id: string;
+                                     name: string;
+                                     imageUrl: string 
+                                     originalPrice: number;
+                                     discountPrice: number;
+                                     offerPercentage: numbmer;
+                                     rating: number;
+                                     ratingCount: number;
+                                     tags: string[];
+                                }
+
+Declare RootStackParamList => const Stack = createNativeStackNavigator<RootStackParamList>();
+
+Wrap in NavigationContainer main content in App.js.
+
+Add Stack.Navigator tag inside with "initialRouteName='Home'" attribute.
+
+Add Stack.Screen with attributes - <Stack.Screen
+                                        name="Home"
+                                        component={Home}
+                                        options={{
+                                        title: 'Trending products',
+                                        }}
+                                    />
+And Details Stack.Screen.
+
+Create data folder in src. Add constants.ts file inside with products data.
+
+Create folder components with ProductItem.tsx and Separator.tsx inside.
+
+Add types to ProductItem 
+               type ProductProps = PropsWithChildren<{
+                         product: Product;
+                         }>;
+
+               const ProductItem = ({product}: ProductProps) => {
+               return (
+               <View style={styles.container}>
+                                   ...
+                                   </View>
+                                                            )}
+
+Home.tsx => import {NativeStackScreenProps} from '@react-navigation/native-stack'; 
+               import {RootStackParamList} from '../App';
+
+Add type HomeProps = NativeStackScreenProps<RootStackParamList, 'Home'>;
+
+add navigation as prop with type HomeProps => const Home = ({navigation}: HomeProps) => {...}
+add styles 
+add FlatList <FlatList
+                         data={PRODUCTS_LIST}
+                         keyExtractor={item => item.id}
+                         ItemSeparatorComponent={Separator}
+                         renderItem={({item}) => (
+                           <Pressable
+                             onPress={() => {
+                               navigation.navigate('Details', {
+                                 product: item,
+                               });
+                             }}>
+                             <ProductItem product={item} />
+                           </Pressable>
+                          )}
+                         />
+
